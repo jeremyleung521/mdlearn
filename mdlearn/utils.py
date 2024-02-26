@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional, Type, TypeVar, Union
 
 import torch
 import yaml
-from pydantic import BaseSettings as _BaseSettings
+from pydantic_settings import BaseSettings as _BaseSettings
 
 PathLike = Union[str, Path]
 _T = TypeVar("_T")
