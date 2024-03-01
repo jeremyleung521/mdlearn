@@ -349,7 +349,7 @@ class Trainer:
         plot_path.mkdir(exist_ok=exist_ok)
         return output_path, checkpoint_path, plot_path
 
-    def _load_checkpoint(self, checkpoint: PathLike) -> int:
+    def _load_checkpoint(self, checkpoint: PathLike, map_location: Optional[Union[str, torch.device]] = 'cpu') -> int:
         """Load parameters from a checkpoint file.
 
         Parameters
@@ -357,6 +357,9 @@ class Trainer:
         checkpoint : PathLike
             PyTorch checkpoint file (.pt) to load model, optimizer
             and scheduler parameters from.
+
+        map_location : Optional[Union[str, torch.device]]
+            Device to map the checkpoint. Default is 'cpu'.
 
         Returns
         -------
@@ -372,7 +375,7 @@ class Trainer:
         from mdlearn.utils import resume_checkpoint
 
         return resume_checkpoint(
-            checkpoint, self.model, {"optimizer": self.optimizer}, self.scheduler
+            checkpoint, self.model, {"optimizer": self.optimizer}, self.scheduler, map_location
         )
 
     def _resume_training(self, checkpoint: Optional[PathLike] = None) -> int:

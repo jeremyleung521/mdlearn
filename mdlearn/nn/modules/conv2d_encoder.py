@@ -1,5 +1,5 @@
 from math import isclose
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -25,6 +25,7 @@ class Conv2dEncoder(nn.Module):
         affine_dropouts: List[float] = [0.0],
         latent_dim: int = 3,
         activation: str = "ReLU",
+        map_location: Union[str, torch.device] = 'cpu',
     ):
         super().__init__()
 
@@ -37,6 +38,7 @@ class Conv2dEncoder(nn.Module):
         self.affine_dropouts = affine_dropouts
         self.latent_dim = latent_dim
         self.activation = activation
+        self.map_location = map_location
 
         self.encoder = nn.Sequential(
             *self._conv_layers(), nn.Flatten(), *self._affine_layers()
@@ -58,7 +60,7 @@ class Conv2dEncoder(nn.Module):
             _init_weights(self.logstd)
         # Loading checkpoint weights
         elif init_weights.endswith(".pt"):
-            checkpoint = torch.load(init_weights, map_location="cpu")
+            checkpoint = torch.load(init_weights, map_location=self.map_location)
             self.load_state_dict(checkpoint["encoder_state_dict"])
 
     def _conv_layers(self):

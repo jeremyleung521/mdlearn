@@ -261,6 +261,7 @@ def resume_checkpoint(
     model: "torch.nn.Module",
     optimizers: Dict[str, "torch.optim.Optimizer"],
     scheduler: Optional["torch.optim.lr_scheduler._LRScheduler"] = None,
+    map_location: Union[str, torch.device] = 'cpu',
 ) -> int:
     """Modifies :obj:`model`, :obj:`optimizer`, and :obj:`scheduler` with
     values stored in torch .pt file :obj:`checkpoint_file` to resume from
@@ -276,6 +277,8 @@ def resume_checkpoint(
         Optimizers to update.
     scheduler : Optional[torch.optim.lr_scheduler._LRScheduler]
         Optional scheduler to update.
+    map_location: Optional[str, torch.device]
+        Device location device to map checkpoint. Defaults to 'cpu'.
 
     Returns
     -------
@@ -283,7 +286,7 @@ def resume_checkpoint(
         The epoch the checkpoint is saved plus one i.e. the current
         training epoch to start from.
     """
-    checkpoint = torch.load(checkpoint_file, map_location="cpu")
+    checkpoint = torch.load(checkpoint_file, map_location=map_location)
     start_epoch = checkpoint["epoch"] + 1
     model.load_state_dict(checkpoint["model_state_dict"])
     for name, optimizer in optimizers.items():

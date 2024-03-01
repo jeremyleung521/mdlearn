@@ -1,5 +1,5 @@
 from math import isclose
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -22,6 +22,7 @@ class Conv2dDecoder(nn.Module):
         latent_dim: int = 3,
         activation: str = "ReLU",
         output_activation: str = "Sigmoid",
+        map_location: Union[str, torch.device] = 'cpu',
     ):
         super().__init__()
 
@@ -43,6 +44,7 @@ class Conv2dDecoder(nn.Module):
         self.reshape = (-1, *self.encoder_shapes[-1])
 
         self.init_weights(init_weights)
+        self.map_location = map_location
 
     def init_weights(self, init_weights: Optional[str]):
         if init_weights is None:
@@ -50,7 +52,7 @@ class Conv2dDecoder(nn.Module):
             self.conv_layers.apply(_init_weights)
         # Loading checkpoint weights
         elif init_weights.endswith(".pt"):
-            checkpoint = torch.load(init_weights, map_location="cpu")
+            checkpoint = torch.load(init_weights, map_location=self.map_location)
             self.load_state_dict(checkpoint["decoder_state_dict"])
 
     def forward(self, x):
