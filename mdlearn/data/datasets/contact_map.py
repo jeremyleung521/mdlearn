@@ -183,7 +183,8 @@ class ContactMapDataset(Dataset):
         # Create array of 1s, all values in the contact map are 1.
         values = torch.ones(indices.shape[1], dtype=torch.float32)
         # Set shape to the last 2 elements of self.shape.
-        data = torch.sparse.FloatTensor(indices, values, self.shape[-2:]).to_dense()
+        data = torch.sparse_coo_tensor(indices, values, self.shape[-2:]).to_dense() 
+        #data = torch.sparse.FloatTensor(indices, values, self.shape[-2:]).to_dense()
         data = data.view(self.shape)
         return data
 
